@@ -11,13 +11,12 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Basic empty validation
+
     if (!email || !password) {
       alert("Please enter both email and password.");
       return;
     }
  
-    // Dummy login credentials
     if (email === "suryayenumula@gmail.com" && password === "123456789") {
       navigate('/dashboard'); // must match route exactly
     } else {
