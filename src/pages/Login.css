@@ -1,5 +1,5 @@
 
-/* --- CENTERED LOGIN --- */
+
 .auth-wrapper {
   display: flex; justify-content: center; align-items: center;
   width: 100vw; height: 100vh; position: relative;
@@ -12,13 +12,13 @@
   border: 1px solid var(--border);
   width: 420px; height: 520px;
   display: flex; flex-direction: column;
-  justify-content: space-between; /* Requirement: Button at bottom */
+  justify-content: space-between; 
   box-shadow: 0 0 40px rgba(239, 68, 68, 0.1);
   text-align: center; z-index: 10;
 }
 
 .logo-text-inline {
-  white-space: nowrap; /* Requirement: One single line */
+  white-space: nowrap; 
   font-weight: 800; color: #fff; font-size: 1.6rem; letter-spacing: -0.5px;
 }
 

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import './Login.css';
 
 
+
 const Login = () => {
   const navigate = useNavigate();
 
@@ -18,9 +19,9 @@ const Login = () => {
     }
  
     if (email === "suryayenumula@gmail.com" && password === "123456789") {
-      navigate('/dashboard'); // must match route exactly
+      navigate('/dashboard');
     } else {
-      alert("Login Failed! Invalid email or password.");
+      alert("Login Failed! Invalid email or password.");6
     }
   };
 

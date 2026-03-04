@@ -37,7 +37,9 @@
 .crimson-drop-zone:hover{
   cursor: pointer;
 }
-/* REQUIREMENT: GENERATE 3 BELOW UPLOADS */
+
+
+
 .btn-generate-crimson {
   width: 100%; background: transparent; color: var(--crimson);
   border: 1px solid var(--crimson); padding: 1rem; border-radius: 6px;
@@ -45,7 +47,7 @@
 }
 .btn-generate-crimson:hover { background: var(--crimson); color: #fff; }
 
-/* MAIN AREA */
+
 .main-view { padding: 0; overflow: hidden; background: #09090b; }
 .view-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
 .search-box { display: flex; align-items: center; gap: 10px; background: var(--panel-bg); padding: 8px 15px; border-radius: 6px; border: 1px solid var(--border); }
@@ -53,7 +55,7 @@
 
 .scroll-area { flex: 1; overflow-y: auto; padding: 2rem; }
 
-/* LOGOUT */
+
 .btn-logout-crimson {
   background: transparent; border: 1px solid var(--border);
   color: #71717a; padding: 0.8rem; border-radius: 6px; cursor: pointer;

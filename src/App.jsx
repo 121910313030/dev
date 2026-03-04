@@ -1,15 +1,20 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/login";
+import Login from "./pages/Login";
 import Dashboard from "./pages/Dashbord";
-import './App.css';
+import { Navigate } from "react-router-dom";
+import { BrowserRouter , Routes, Route } from "react-router-dom";
+import TestData from "./pages/Test";
 
-export default function App() {
+
+function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/test" element={<TestData />} />
       </Routes>
     </BrowserRouter>
   );
 }
+
+export default App;

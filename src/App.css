@@ -1,16 +1,16 @@
-/* --- GLOBAL SYSTEM (Fit-to-Screen) --- */
+
 html, body, #root {
   margin: 0; padding: 0;
   width: 100%; height: 100%;
   overflow: hidden;
   font-family: 'Inter', system-ui, sans-serif;
-  background: #09090b; /* True Black/Zinc base */
+  background: #a7a7aa; 
   color: #f8fafc;
 }
 
 :root {
   --crimson: #ef4444;
-  --dark-red: #991b1b;
+  --dark-red: #31879e;
   --panel-bg: #18181b;
   --border: #27272a;
 }
