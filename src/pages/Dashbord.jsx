@@ -30,10 +30,10 @@ const Dashboard = ({ onLogout }) => {
   };
 
   // Logic to handle file selection
-  const processFile = (file, type) => {
-    if (file) {
-      setRawFiles(prev => ({ ...prev, [type]: file }));
-      setFiles(prev => ({ ...prev, [type]: file.name }));
+  const processFile = (fileList, type) => {
+    if (fileList.length > 0) {
+      setRawFiles(prev => ({ ...prev, [type]: fileList }));
+      setFiles(prev => ({ ...prev, [type]: `${fileList.length} files selected` }));
     }
   };
 
@@ -52,7 +52,7 @@ const Dashboard = ({ onLogout }) => {
   };
 
   const handleFileSelect = (e, type) => {
-    processFile(e.target.files[0], type);
+    processFile(e.target.files, type);
   };
 
   const handleshortlist = async () => {
@@ -64,8 +64,10 @@ const Dashboard = ({ onLogout }) => {
     setLoading(true);
     const formData = new FormData();
     // 'resume_file' matches the name in your Django request.FILES.get('resume_file')
-    formData.append('resume_file', rawFiles.csv);
-    formData.append('jd_text', rawFiles.jd);
+    for (let i = 0; i < rawFiles.csv.length;i++){
+      formData.append('resumes', rawFiles.csv[i]);
+    }
+    formData.append('jd_file', rawFiles.jd[0]);
 
     try {
       const response = await fetch('http://127.0.0.1:8000/api/resumes', {
@@ -119,7 +121,14 @@ const Dashboard = ({ onLogout }) => {
               <p>{files.csv ? "File Loaded" : "Upload Resume (PDF)"}</p>
               <span>{files.csv || "Click or Drag File"}</span>
             </div>
-            <input type="file" ref={csvInputRef} style={{ display: "none"}} onChange={(e) => handleFileSelect(e, 'csv')} />
+            <input 
+              type="file"
+              ref={csvInputRef}
+              multiple
+              accept="application/pdf"
+              style={{ display: "none"}}
+              onChange={(e) => handleFileSelect(e, 'csv')}
+            />
 
             {/* JD Upload Box */}
             <div 
@@ -134,7 +143,7 @@ const Dashboard = ({ onLogout }) => {
               <p>{files.jd ? "JD Loaded" : "Upload Job Description"}</p>
               <span>{files.jd || "Click or Drag File"}</span>
             </div>
-            <input type="file" ref={jdInputRef} style={{ display: "none" }} onChange={(e) => handleFileSelect(e, 'jd')} />
+            <input type="file" accept="application/pdf" multiple ref={jdInputRef} style={{ display: "none" }} onChange={(e) => handleFileSelect(e, 'jd')} />
 
             <button 
               className="btn-generate-crimson" 
