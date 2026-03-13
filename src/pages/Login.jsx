@@ -2,27 +2,68 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import './Login.css';
-
-
+// import { ToastContainer,toast } from 'react-toastify';
 
 const Login = () => {
   const navigate = useNavigate();
 
+
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = async (e) => {
+    e.preventDefault(); 
 
-    if (!email || !password) {
-      alert("Please enter both email and password.");
-      return;
+    setEmailError('');
+    setPasswordError('');
+    
+    let valid = true;
+
+    if (!email) {
+      setEmailError("Email is Required");
+      valid = false;
     }
- 
-    if (email === "suryayenumula@gmail.com" && password === "123456789") {
-      navigate('/dashboard');
-    } else {
-      alert("Login Failed! Invalid email or password.");6
+    if (!password) {
+      setPasswordError("Password is Required");
+      valid = false;
     }
+
+    if (!valid) return;
+
+    try {
+      const response = await fetch("http://localhost:8000/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        navigate('/dashboard/');
+      } else {
+      
+      if (data.errorType === 'email') {
+        setEmailError(data.message);
+      } else (data.errorType === 'password') 
+        setPasswordError(data.message);
+        setPasswordError("Invalid Password or Email");
+      }
+    }
+
+    catch (err) {
+      setPasswordError("Server error. Try again later");
+    }
+  
   };
 
   return (
@@ -45,15 +86,18 @@ const Login = () => {
           </p>
         </header>
 
-        <div className="login-form">
+        {/* FORM ADDED HERE */}
+        <form className="login-form" onSubmit={handleLogin}>
+
           <div className="crimson-input-group">
-            <label>Professional Email</label>
+            <label>Email</label>
             <input
               type="email"
               placeholder="recruiter@agency.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            {emailError && <p className="error-text">{emailError}</p>}
           </div>
 
           <div className="crimson-input-group">
@@ -64,13 +108,18 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            {passwordError && <p className='error-text'>{passwordError}</p>}
           </div>
-        </div>
 
-        <button className="btn-primary-crimson" onClick={handleLogin}>
-          Sign-In
-        </button>
-      </motion.div>
+          {/* BUTTON TYPE CHANGED */}
+          <button className="btn-primary-crimson" type="submit">
+            Sign-In
+          </button>
+          {/* <p className='signup-link'>
+            New user? <Link to="/signup">Sign Up</Link>
+          </p> */}
+        </form>
+      </motion.div> 
     </div>
   );
 };

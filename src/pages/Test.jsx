@@ -1,6 +1,5 @@
 import { useEffect , useState } from "react";
 import API from "../api/api";
-import { div } from "framer-motion/client";
 
 const TestData = () => {
   const [data, setData] = useState([]);
@@ -11,8 +10,9 @@ const TestData = () => {
 
   const fetchData = async () => {
     try {
-      const response = await API.get("api/test/");
+      const response = await getResumes();
       setData(response.data);
+      console.log(response.data, "RESULT");
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -20,7 +20,6 @@ const TestData = () => {
 
   return (
     <div>
-      <h2>Data from Django</h2>
       {data.map((item) => (
         <div key={item.id}>
           <p>{item.name} - {item.email}</p>
@@ -29,5 +28,6 @@ const TestData = () => {
     </div>
   );
 };
+
 
 export default TestData;

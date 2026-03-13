@@ -2,12 +2,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Resume
 from .serializer import ResumeSerializer
-import fitz  
+from .ai_scoring import get_resume_score
+import fitz
 
 
 def get_pdf_text(file_stream):
-    
     text = ""
+
     try:
         file_bytes = file_stream.read()
 
@@ -19,46 +20,66 @@ def get_pdf_text(file_stream):
         return text
 
     except Exception as e:
-        print(f"Error extracting PDF: {e}")
-        return None
+        print("PDF error:", e)
+        return ""
 
 
 @api_view(['GET', 'POST'])
 def resume_api(request):
 
     if request.method == "GET":
-        data = Resume.objects.all()
+        data = Resume.objects.all().order_by('-uploaded_at')
         serializer = ResumeSerializer(data, many=True)
         return Response(serializer.data)
 
-    elif request.method == "POST":
+    if request.method == "POST":
 
-        files = request.FILES.getlist("resumes")   # multiple resumes
-        jd_file = request.FILES.get("jd_file")  # single JD
+        files = request.FILES.getlist("resumes")
+        jd_file = request.FILES.get("jd_file")
 
         if not files:
             return Response({"error": "No resumes uploaded"}, status=400)
 
-        uploaded_files = []
-        
-        extracted_text_jd = get_pdf_text(jd_file)
+        extracted_text_jd = get_pdf_text(jd_file) if jd_file else "General Analysis"
+
+        resumes_for_ai = []
+
         for file in files:
+            text = get_pdf_text(file)
 
-            extracted_text = get_pdf_text(file)
+            resumes_for_ai.append({
+                "name": file.name,
+                "text": text,
+                "file_obj": file
+            })
 
-            if jd_file:
-                jd_file.seek(0)   # reset pointer
-            
-            resume = Resume.objects.create(
-                resume_file=file,
+        try:
+            ai_results = get_resume_score(resumes_for_ai, extracted_text_jd)
+        except Exception as e:
+            print("AI error:", e)
+            return Response({"error": "AI scoring failed"}, status=500)
+
+        candidates = []
+
+        for i, result in enumerate(ai_results):
+
+            resume_obj = Resume.objects.create(
+                resume_file=resumes_for_ai[i]["file_obj"],
                 jd_file=jd_file,
-                extracted_text2 = extracted_text_jd, 
-                extracted_text1=extracted_text
+                extracted_text1=resumes_for_ai[i]["text"],
+                extracted_text2=extracted_text_jd,
+                score=result["score"],
+                analysis_reason=result["reason"]
             )
 
-            uploaded_files.append(file.name)
-        
+            candidates.append({
+                "id": resume_obj.id,
+                "name": resumes_for_ai[i]["name"],
+                "score": result["score"],
+                "skills": result.get("skills", []),
+                "justification": result["reason"]
+            })
+
         return Response({
-            "message": "Resumes uploaded successfully",
-            "files": uploaded_files
+            "candidates": candidates
         })

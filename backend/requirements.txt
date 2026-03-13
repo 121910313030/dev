@@ -2,6 +2,6 @@ Django
 djangorestframework
 psycopg2-binary
 django-cors-headers
-python-dotenv 
-axios
+python-dotenv
 
+# fitz

@@ -1,0 +1,81 @@
+/* .auth-wrapper {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.auth-wrapper h2 {
+  color: #c62828;
+   margin-bottom: 20px;
+}
+
+.auth-wrapper form { 
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.auth-wrapper input {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.auth-wrapper input:focus {
+  border-color: #c62828;
+}
+
+button[type="submit"] {
+  padding: 12px;
+  background-color: #c62828;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button[type="submit"]:hover {
+  background-color: #a21f1f;
+}
+
+.error-text {
+  color: red;
+  font-size: 13px;
+  margin-top: -10px;
+  text-align: left;
+}
+
+.success-text {
+  color: green;
+  font-size: 13px;
+  margin-top: -10px;
+  text-align: left;
+}
+
+.auth-wrapper p {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.auth-wrapper p a {
+  color: #c62828;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (max-width: 500px) {
+  .auth-wrapper {
+    margin: 20px;
+    padding: 20px;
+  }
+}

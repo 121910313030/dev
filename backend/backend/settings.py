@@ -9,15 +9,15 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
-from pathlib import Path
 import os 
+from pathlib import Path
 from dotenv import load_dotenv
-
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / '.env')
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -91,11 +91,15 @@ DATABASES = {
     }
 }
 
+rest_framework ={
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000", # Allow your frontend origin
-    "http://127.0.0.1:3000", # Add if your frontend also uses 127.0.0.1
-]
+    
+}
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000", 
+#     "http://127.0.0.1:3000",
+# ]
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
