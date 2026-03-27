@@ -1,28 +1,28 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Upload, Search, CheckCircle, Brain } from "lucide-react";
-import "./Home.css";
+import styles from "./Home.module.css";
 
 const Home = () => {
 
   const navigate = useNavigate();
 
   return (
-    <div className="home-container">
+    <div className={styles["home-container"]}>
 
       {/* HERO SECTION */}
-      <section className="hero">
-        <h1 className="hero-title">
+      <section className={styles["hero"]}>
+        <h1 className={styles["hero-title"]}>
           AI Resume Analyzer
         </h1>
 
-        <p className="hero-subtitle">
+        <p className={styles["hero-subtitle"]}>
           Upload resumes and let AI automatically analyze, extract skills,
           compare with job descriptions, and shortlist the best candidates.
         </p>
 
         <button
-          className="hero-btn"
+          className={styles["hero-btn"]}
           onClick={() => navigate("/login")}
         >
           Get Started
@@ -31,15 +31,15 @@ const Home = () => {
 
 
       {/* FEATURES SECTION */}
-      <section className="features">
+      <section className={styles["features"]}>
 
-        <h2 className="section-title">
+        <h2 className={styles["section-title"]}>
           Powerful Resume Intelligence
         </h2>
 
-        <div className="feature-grid">
+        <div className={styles["feature-grid"]}>
 
-          <div className="feature-card">
+          <div className={styles["feature-card"]}>
             <Upload size={40} />
             <h3>Upload Resumes</h3>
             <p>
@@ -47,7 +47,7 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="feature-card">
+          <div className={styles["feature-card"]}>
             <Brain size={40} />
             <h3>Job Description Matching</h3>
             <p>
@@ -56,7 +56,7 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="feature-card">
+          <div className={styles["feature-card"]}>
             <CheckCircle size={40} />
             <h3>Smart Shortlisting</h3>
             <p>
@@ -70,30 +70,30 @@ const Home = () => {
 
 
       {/* HOW IT WORKS */}
-      <section className="steps">
+      <section className={styles["steps"]}>
 
-        <h2 className="section-title">
+        <h2 className={styles["section-title"]}>
           How It Works
         </h2>
 
-        <div className="steps-grid">
+        <div className={styles["steps-grid"]}>
 
-          <div className="step">
+          <div className={styles["step"]}>
             <span>1</span>
             <p>Upload candidate resumes</p>
           </div>
 
-          <div className="step">
+          <div className={styles["step"]}>
             <span>2</span>
             <p>Upload Job Description</p>
           </div>
 
-          <div className="step">
+          <div className={styles["step"]}>
             <span>3</span>
             <p>AI analyzes and extracts skills</p>
           </div>
 
-          <div className="step">
+          <div className={styles["step"]}>
             <span>4</span>
             <p>View ranked candidates instantly</p>
           </div>
@@ -104,7 +104,7 @@ const Home = () => {
 
 
       {/* FOOTER */}
-      <footer className="home-footer">
+      <footer className={styles["home-footer"]}>
         <p>© 2026 AI Resume Analyzer</p>
       </footer>
 

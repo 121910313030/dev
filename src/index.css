@@ -5,8 +5,8 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  background-color: #f8fafc;
+  overscroll-behavior: none;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -23,11 +23,14 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  margin: 0; 
+  display: flex; 
+  place-items: center; 
+  min-width: 100vw;
   min-height: 100vh;
+
+  
+  scroll-behavior: none;
 }
 
 h1 {
@@ -71,4 +74,8 @@ button:focus-visible {
   --dark-red: #991b1b;
   --panel-bg: #18181b;
   --border: #27272a;
+}
+
+body::-webkit-scrollbar {
+    display: none;
 }

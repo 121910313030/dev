@@ -1,0 +1,89 @@
+.pageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background: #f1f5f9;
+}
+
+.cardBox {
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+.title {
+  margin-bottom: 1.5rem;
+  color: #0f172a;
+}
+
+.formStack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.fieldBlock {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  
+}
+
+.fieldBlock label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #fcfeff;
+  
+}
+
+.fieldBlock input {
+  padding: 0.7rem;
+  border: 1px solid #cbd5f5;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #cbd5f5;
+  color: #0f172a;
+}
+
+.primaryBtn {
+  background: #2563eb;
+  color: white;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primaryBtn:hover {
+  background: #1e40af;
+}
+
+.errorMsg {
+  color: #dc2626;
+  font-size: 0.85rem;
+}
+
+.successMsg {
+  color: #16a34a;
+  font-size: 0.85rem;
+}
+
+.bottomText {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #000000;
+}
+
+.bottomText a {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}

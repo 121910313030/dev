@@ -1,31 +1,39 @@
 import { useState, useRef } from "react";
-import { Upload, FileText, LogOut, CheckCircle, Search, AlertCircle, Star } from "lucide-react";
-import "./Dashboard.css";
+import { Upload, FileText, CheckCircle, Search, AlertCircle, Loader2 } from "lucide-react";
+import styles from './Dashboard.module.css';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Navbar from "./Navbar";
+import { toast } from "react-toastify";
 
 const Dashboard = ({ onLogout }) => {
   const navigate = useNavigate();
 
   const [dragActive, setDragActive] = useState(null);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
-
   const [files, setFiles] = useState({ csv: null, jd: null });
   const [rawFiles, setRawFiles] = useState({ csv: null, jd: null });
-
   const [loading, setLoading] = useState(false);
   const [candidates, setCandidates] = useState([]);
 
   const csvInputRef = useRef(null);
   const jdInputRef = useRef(null);
 
+  // Sorting logic: Always show highest scores first
   const rankedCandidates = [...candidates].sort((a, b) => b.score - a.score);
+  
+  // Defaults to the #1 candidate if the user hasn't clicked one yet
   const displayCandidate = selectedCandidate || rankedCandidates[0];
 
   const handleLogout = () => {
     if (onLogout) onLogout();
-    // localstorage.removeItem('token')
-    navigate("/");
+    navigate("/login");
+  };
+
+  const getScoreClass = (score) => {
+    if (score >= 80) return styles.highConfidence; 
+    if (score >= 50) return styles.medConfidence;  
+    return styles.lowConfidence;                   
   };
 
   const processFile = (fileList, type) => {
@@ -41,7 +49,6 @@ const Dashboard = ({ onLogout }) => {
   const handleDrag = (e, type) => {
     e.preventDefault();
     e.stopPropagation();
-
     if (e.type === "dragenter" || e.type === "dragover") setDragActive(type);
     else if (e.type === "dragleave") setDragActive(null);
   };
@@ -50,84 +57,74 @@ const Dashboard = ({ onLogout }) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(null);
-
     processFile(e.dataTransfer.files, type);
-  };
-
-  const handleFileSelect = (e, type) => {
-    processFile(e.target.files, type);
   };
 
   const handleshortlist = async () => {
     if (!rawFiles.csv || !rawFiles.jd) {
-      alert("Please upload both Resume(s) and a Job Description.");
+      toast.error("Please upload both Resume(s) and a Job Description.");
       return;
     }
 
     setLoading(true);
-
     const formData = new FormData();
-
     for (let i = 0; i < rawFiles.csv.length; i++) {
       formData.append("resumes", rawFiles.csv[i]);
     }
-
     formData.append("jd_file", rawFiles.jd[0]);
 
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/api/resumes/",
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
-
-      console.log("Backend Response:", response.data);
-
       setCandidates(response.data.candidates || []);
 
-      // alert("Analysis complete!");
+      setFiles({ csv: null, jd: null });     // Clears the UI labels
+      setRawFiles({ csv: null, jd: null });  // Clears the actual data
+      
+      if (csvInputRef.current) csvInputRef.current.value = ""; // Resets the HTML input
+      if (jdInputRef.current) jdInputRef.current.value = "";
 
-      setFiles({ csv: null, jd: null });
-      setRawFiles({ csv: null, jd: null });
-
+      // Reset selected candidate to the new #1
+      setSelectedCandidate(null); 
     } catch (error) {
-      console.error("Upload error:", error);
-
-      if (error.response) {
-        alert("Server error: " + error.response.status);
-      } else {
-        alert("Could not connect to Django backend.");
-      }
+      toast.error("Upload error: " + (error.response?.status || "Connection failed"));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="dashboard-root">
-      <div className="hub-container">
+    <div className={styles["dashboard-root"]}>
+      
+      {/* --- FULL SCREEN BLUR LOADER --- */}
+      {loading && (
+        <div className={styles.loaderOverlay}>
+          <div className={styles.loaderContent}>
+            <Loader2 size={100} className={styles.spinner} />
+            <p>AI Intelligence is Ranking Resumes...</p>
+            <span>Please wait while we analyze skills and match job descriptions</span>
+          </div>
+        </div>
+      )}
 
-        {/* Sidebar */}
-        <aside className="crimson-panel sidebar">
-          <div className="upload-section">
+      <Navbar onLogout={handleLogout} userName="Admin User" />
 
-            <div className="resume-analyser-title">
-              <h2 style={{color:"red"}}>Recruiter's Insights</h2>
-              <h3 style={{color:"black"}}>Upload Resumes</h3>
+      <div className={styles["hub-container"]}>
+        {/* Left Sidebar */}
+        <aside className={styles["crimson-panel-sidebar"]}>
+          <div className={styles["upload-section"]}>
+            <div className={styles["resume-analyser-title"]}>
+              <h2 style={{ color: "#ef4444" }}>Recruiter's Insights</h2>
+              <h3 style={{ color: "black" }}>Upload Resumes</h3>
             </div>
 
-            <span className="section-label">Resume Analyzer</span>
-
-            {/* Resume Upload */}
             <div
-              className={`crimson-drop-zone ${dragActive === "csv" ? "active" : ""}`}
+              className={`${styles["crimson-drop-zone"]} ${dragActive === "csv" ? styles.active : ""}`}
               onDragEnter={(e) => handleDrag(e, "csv")}
               onDragOver={(e) => handleDrag(e, "csv")}
-              onDragLeave={(e) => handleDrag(e, "csv")}
               onDrop={(e) => handleDrop(e, "csv")}
               onClick={() => csvInputRef.current.click()}
             >
@@ -135,22 +132,12 @@ const Dashboard = ({ onLogout }) => {
               <p>{files.csv ? "Files Loaded" : "Upload Resume (PDF)"}</p>
               <span>{files.csv || "Click or Drag File"}</span>
             </div>
+            <input type="file" ref={csvInputRef} multiple accept="application/pdf" style={{ display: "none" }} onChange={(e) => processFile(e.target.files, "csv")} />
 
-            <input
-              type="file"
-              ref={csvInputRef}
-              multiple
-              accept="application/pdf"
-              style={{ display: "none" }}
-              onChange={(e) => handleFileSelect(e, "csv")}
-            />
-
-            {/* JD Upload */}
             <div
-              className={`crimson-drop-zone ${dragActive === "jd" ? "active" : ""}`}
+              className={`${styles["crimson-drop-zone"]} ${dragActive === "jd" ? styles.active : ""}`}
               onDragEnter={(e) => handleDrag(e, "jd")}
               onDragOver={(e) => handleDrag(e, "jd")}
-              onDragLeave={(e) => handleDrag(e, "jd")}
               onDrop={(e) => handleDrop(e, "jd")}
               onClick={() => jdInputRef.current.click()}
             >
@@ -158,107 +145,64 @@ const Dashboard = ({ onLogout }) => {
               <p>{files.jd ? "JD Loaded" : "Upload Job Description"}</p>
               <span>{files.jd || "Click or Drag File"}</span>
             </div>
+            <input type="file" accept="application/pdf" ref={jdInputRef} style={{ display: "none" }} onChange={(e) => processFile(e.target.files, "jd")} />
 
-            <input
-              type="file"
-              accept="application/pdf"
-              ref={jdInputRef}
-              style={{ display: "none" }}
-              onChange={(e) => handleFileSelect(e, "jd")}
-            />
-
-            <button
-              className="btn-generate-crimson"
-              onClick={handleshortlist}
-              disabled={loading}
-            >
-              {loading ? "Analyzing..." : "Shortlist Candidates"}
+            <button className={styles["btn-generate-crimson"]} onClick={handleshortlist} disabled={loading}>
+              Shortlist Candidates
             </button>
           </div>
-
-          <button className="btn-logout-crimson" onClick={handleLogout}>
-            <LogOut size={16} /> Sign-Out
-          </button>
         </aside>
 
-        {/* Main Ranking */}
-        <main className="crimson-panel main-view">
-
-          <header className="view-header">
-            <h2>Top Candidates</h2>
-
-            <div className="search-box">
+        {/* Center Main View */}
+        <main className={styles["crimson-panel-main-view"]}>
+          <header className={styles["view-header"]}>
+            <h2>Top 3 Candidates</h2>
+            <div className={styles["search-box"]}>
               <Search size={16} color="#94a3b8" />
               <input type="text" placeholder="Filter candidates..." />
             </div>
           </header>
 
-          <div className="scroll-area">
-
-            {rankedCandidates.slice(0, 5).map((c, index) => (
-              <div
-                key={c.id}
-                className="candidate-card crimson-panel"
-                style={{ marginBottom: "1rem", padding: "1rem" }}
+          <div className={styles["scroll-area"]}>
+            {rankedCandidates.slice(0, 3).map((c, index) => (
+              <div 
+                key={c.id || index} 
+                className={`${styles["candidate-card"]} ${displayCandidate?.name === c.name ? styles.activeCard : ""}`}
+                onClick={() => setSelectedCandidate(c)}
               >
-                <div style={{ display: "flex",color : "black", justifyContent: "space-between" }}>
+                <div className={styles["infoGroup"]}>
+                  <h3>#{index + 1} {c.name}</h3>
+                </div>
 
-                  <div>
-                    <h3>#{index + 1} {c.name}</h3>
-                    <p style={{ fontSize: "0.8rem", color: "#000000" }}>
-                      Skills: {c.skills.join(", ")}
-                    </p>
+                <div className={styles["statusGroup"]}>
+                  <span className={styles["experienceBadge"]}>{c.experience || 0} Years Exp</span>
+                  <div className={styles["simpleScoreBadge"]}>
+                    {c.score}% Match
                   </div>
-
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                      <Star size={16} color="#facc15" />
-                      <span style={{color:"black"}}>{c.score}%</span>
-                    </div>
-
-                    <button
-                      className="btn-generate-crimson"
-                      style={{ marginTop: "0.5rem" , color:"lightgoldenrodyellow"}}
-                      onClick={() => setSelectedCandidate(c)}
-                    >
-                      View Review
-                    </button>
-                  </div>
-
                 </div>
               </div>
             ))}
-
           </div>
-
         </main>
 
-        {/* Right Panel */}
-        <aside className="crimson-panel analytics">
-
-          <h3 style = {{color : 'black'}}>ATS Intelligence</h3>
-
+        {/* Right Analytics Panel */}
+        <aside className={styles["crimson-panel-analytics"]}>
+          <h3 style={{ color: 'black' }}>ATS Intelligence</h3>
           {displayCandidate ? (
             <div style={{ marginTop: "1rem" }}>
-              <h4 style={{color:"black"}}>{displayCandidate.name}</h4>
-
-              <p>
-                <strong style={{color: "black"}}>Score: {displayCandidate.score }%</strong> 
-              </p>
-
-              <p style={{ marginTop: "1rem", color: "#3c0d04" }}>
-                {displayCandidate.justification}
+              <h4 style={{ color: "black" }}>{displayCandidate.name}</h4>
+              <p><strong style={{ color: "black" }}>Score: {displayCandidate.score}%</strong></p>
+              <p className={styles["justificationText"]}>
+                {displayCandidate.justification || "AI justification pending..."}
               </p>
             </div>
           ) : (
-            <div style={{ marginTop: "2rem", textAlign: "center", color: "black"}}>
-              <AlertCircle size={40} color="#27272a" />
-              <p style={{color:"red"}}>No candidates analyzed yet.</p>
+            <div style={{ marginTop: "2rem", textAlign: "center" }}>
+              <AlertCircle size={40} color="#cbd5e1" />
+              <p style={{ color: "#ef4444", marginTop: "1rem" }}>No candidates analyzed yet.</p>
             </div>
           )}
-
         </aside>
-
       </div>
     </div>
   );

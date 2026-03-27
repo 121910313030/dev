@@ -1,0 +1,102 @@
+.welcomeText {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #000000;
+  margin: 10px 0 30px 0;
+}
+
+.batchGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+  padding-bottom: 20px;
+  
+}
+
+.batchCard {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  background-color: rgba(111, 96, 184, 0.1);
+  border: 1px solid #2f2e2e;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  
+}
+
+.batchCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.batchIcon {
+  padding-bottom: 2rem;
+}
+
+.batchMeta h4 {
+  margin: 0;
+  color: #000000;
+  font-weight: 800;
+  position: relative;
+  top: -10px;
+  left: 10px;
+}
+
+.batchMeta p {
+  margin: 5px 0 0 0;
+  color: #000000;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.blackText {
+  color: #000000 !important;
+  font-weight: 500;
+}
+
+/* Update the section container */
+.fadeUp {
+  /* This ensures the scroll area takes up the available space minus the header */
+  height: calc(100vh - 180px); 
+  overflow-y: auto;
+  padding-right: 10px; /* Space for the scrollbar */
+}
+
+/* Custom scrollbar for the grid */
+.fadeUp::-webkit-scrollbar {
+  width: 6px;
+}
+
+.fadeUp::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.fadeUp::-webkit-scrollbar-thumb {
+  background: #000000;
+  border-radius: 10px;
+}
+
+.welcomeText {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #000000;
+  margin: 10px 0 30px 0;
+  /* Make sure the title stays visible while scrolling the grid */
+  position: sticky;
+  top: 0;
+  background: white; 
+  z-index: 5;
+  padding-bottom: 10px;
+}
+
+.batchGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+  padding-bottom: 40px; /* Space at the very bottom */
+}

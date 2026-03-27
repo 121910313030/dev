@@ -1,0 +1,100 @@
+.welcomeText {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #000000;
+  margin: 10px 0 30px 0;
+}
+
+.backLink {
+  background: transparent;
+  border: none;
+  color: #000000;
+  font-weight: 800;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.tableScrollContainer {
+  height: calc(100vh - 280px);
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.tableScrollContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tableScrollContainer::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.tableScrollContainer::-webkit-scrollbar-thumb {
+  background: #000000;
+  border-radius: 10px;
+}
+
+.modernTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.modernTable thead th {
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 10;
+  padding: 15px;
+  border-bottom: 2px solid #000000;
+  color: #000000;
+  font-weight: 800;
+}
+
+.modernTable td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.fileNameCell {
+  color: #000000;
+}
+
+.scorePill {
+  background: #000000;
+  color: #ffffff;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.blackText {
+  color: #000000 !important;
+  font-weight: 500;
+}
+
+.confBadge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.highConf { background: #e6fffa; color: #047481; border: 1px solid #b2f5ea; }
+.medConf { background: #fffaf0; color: #9c4221; border: 1px solid #fbd38d; }
+.lowConf { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
+
+.actionBtns button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.deleteBtn {
+  color: #c53030;
+}

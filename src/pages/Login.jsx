@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import './Login.css';
-// import { ToastContainer,toast } from 'react-toastify';
+import { Home as HomeIcon } from "lucide-react";
+import styles from './Login.module.css';
+import axios from 'axios';
+
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,80 +18,83 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   const handleLogin = async (e) => {
-    e.preventDefault(); 
+  e.preventDefault();
 
-    setEmailError('');
-    setPasswordError('');
-    
-    let valid = true;
+  // Reset errors at the start of every attempt
+  setEmailError('');
+  setPasswordError('');
 
-    if (!email) {
-      setEmailError("Email is Required");
-      valid = false;
+  let valid = true;
+
+  if (!email) {
+    setEmailError("Email is Required");
+    valid = false;
+  }
+  if (!password) {
+    setPasswordError("Password is Required");
+    valid = false;
+  }
+
+  if (!valid) return;
+
+  try {
+    const response = await axios.post("http://localhost:8000/login/", {
+      email: email,
+      password: password
+    });
+
+    // If successful
+    if (response.status === 200 || response.status === 201) {
+      navigate("/dashboard");
     }
-    if (!password) {
-      setPasswordError("Password is Required");
-      valid = false;
-    }
+  } catch (err) {
+    // Axios puts the server response in err.response
+    if (err.response) {
+      const data = err.response.data;
 
-    if (!valid) return;
-
-    try {
-      const response = await fetch("http://localhost:8000/login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        navigate('/dashboard/');
-      } else {
-      
-      if (data.errorType === 'email') {
-        setEmailError(data.message);
-      } else (data.errorType === 'password') 
-        setPasswordError(data.message);
-        setPasswordError("Invalid Password or Email");
+      // Check if backend sent specific error types
+      // Adjust 'errorType' or 'field' based on what your Django backend actually sends
+      if (data.errorType === 'email' || data.email) {
+        setEmailError(data.message || "Invalid Email Address");
+      } 
+      else if (data.errorType === 'password' || data.password) {
+        setPasswordError(data.message || "Incorrect Password");
+      } 
+      else {
+        // Fallback for general "Invalid Credentials"
+        setPasswordError("Invalid email or password");
       }
-    }
-
-    catch (err) {
+    } else {
+      // Network error or server down
       setPasswordError("Server error. Try again later");
     }
-  
-  };
+  }
+};
 
   return (
-    <div className="auth-wrapper crimson-theme">
-      <div className="red-glow-1"></div>
-      <div className="red-glow-2"></div>
+    <div className={`${styles["auth-wrapper"]} ${styles["crimson-theme"]}`}>
+      <div className={styles["red-glow-1"]}></div>
+      <div className={styles["red-glow-2"]}></div>
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="crimson-login-card"
+        className={styles["crimson-login-card"]}
       >
-        <header className="login-header">
-          <div className="crimson-badge" style={{ fontWeight: '900', color: 'white' }}>
+        <header className={styles["login-header"]}>
+          <div className={styles["crimson-badge"]} style={{ fontWeight: '900', color: 'white' }}>
             AI
           </div>
-          <h1 className="logo-text-inline">Resume Analyser</h1>
-          <p className="portal-subtitle">
+          <h1 className={styles["logo-text-inline"]}>Resume Analyser</h1>
+          <p className={styles["portal-subtitle"]}>
             AI-Powered Resume Screening and Insights
           </p>
         </header>
 
         {/* FORM ADDED HERE */}
-        <form className="login-form" onSubmit={handleLogin}>
+        <form className={styles["login-form"]} onSubmit={handleLogin}>
 
-          <div className="crimson-input-group">
+          <div className={styles["crimson-input-group"]}>
             <label>Email</label>
             <input
               type="email"
@@ -97,10 +102,10 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            {emailError && <p className="error-text">{emailError}</p>}
+            {emailError && <p className={styles["error-text"]}>{emailError}</p>}
           </div>
 
-          <div className="crimson-input-group">
+          <div className={styles["crimson-input-group"]}>
             <label>Password</label>
             <input
               type="password"
@@ -108,16 +113,21 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            {passwordError && <p className='error-text'>{passwordError}</p>}
+            {passwordError && <p className={styles['error-text']}>{passwordError}</p>}
           </div>
 
           {/* BUTTON TYPE CHANGED */}
-          <button className="btn-primary-crimson" type="submit">
-            Sign-In
+          <button className={styles["btn-primary-crimson"]} type="submit">
+            LogIn
           </button>
-          {/* <p className='signup-link'>
-            New user? <Link to="/signup">Sign Up</Link>
-          </p> */}
+          <p className={styles["bottomText"]}>
+                      Doesn't have an account? <Link to="/signup">Signup</Link>
+          </p>
+          <p className={styles["bottomTextHome"]}>
+            <Link to="/" className={styles["home-link"]}>
+              <HomeIcon size={35} style={{ marginRight: "1px", marginTop:"4px" }} /> 
+            </Link>
+          </p>
         </form>
       </motion.div> 
     </div>

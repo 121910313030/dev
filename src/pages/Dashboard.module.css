@@ -1,0 +1,327 @@
+/* --- DASHBOARD ROOT --- */
+.dashboard-root {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column; /* Stacks Navbar and Hub */
+  background: #f1f5f9; /* Soft slate background makes cards pop */
+  overflow: hidden;
+  padding-top: 60px;
+  position: sticky;
+}
+
+/* --- HUB CONTAINER --- */
+.hub-container {
+  display: grid;
+  grid-template-columns: 300px 1fr 300px;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  flex: 1; /* Fills remaining height after Navbar */
+  height: calc(100vh - 70px); /* Adjust based on your Navbar height */
+  overflow: hidden; /* Keeps the whole page static */
+}
+
+/* --- THE FLOATING CARDS --- */
+.crimson-panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px; /* Smoother corners */
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  overflow: hidden; /* Ensures content doesn't break card shape */
+}
+
+/* --- SIDEBAR (Left) --- */
+.sidebar {
+  justify-content: flex-start;
+  gap: 1.5rem;
+}
+
+.resume-analyzer-title h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.resume-analyzer-title h3 {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* --- DROP ZONE (Uploads) --- */
+.crimson-drop-zone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 1.5rem 0.5rem;
+  padding-top: 60px;
+  gap: 80px;
+  text-align: center;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  box-shadow: #2563eb;
+  
+}
+
+.crimson-drop-zone:hover, .crimson-drop-zone.active {
+  border-color: #2563eb;
+  background: #f0f7ff;
+  transform: translateY(-2px);
+}
+
+.crimson-drop-zone p {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #502424;
+}
+
+.crimson-drop-zone span {
+  font-size: 0.75rem;
+  color: #222323;
+}
+
+/* --- BUTTONS --- */
+.btn-generate-crimson {
+  width: 100%;
+  background: #3064b7; /* Professional Dark Grey/Black */
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: 1rem;
+}
+
+.btn-generate-crimson:hover {
+  background: #052264;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* --- MAIN VIEW (The Center Float) --- */
+.main-view {
+  padding: 0; /* Header and ScrollArea handle padding */
+  display: flex;
+  flex-direction: column;
+}
+
+.view-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0; /* Keeps header fixed at top of card */
+}
+
+.view-header h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* --- SEARCH BOX --- */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.85rem;
+  width: 150px ;
+}
+
+/* --- THE INDEPENDENT SCROLL AREA --- */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  width: 52vw;
+  height: 65vh;
+  background: #fafafa;
+}
+
+/* --- CANDIDATE CARDS --- */
+.candidate-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  
+  /* Layout setup */
+  display: flex;
+  flex-direction: column;
+  min-height: 120px; /* Gives space for the split layout */
+  justify-content: space-between; 
+}
+
+.candidate-card:hover {
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+  transform: scale(1.01);
+}
+
+/* Top-Left: Name/Rank */
+.infoGroup h3 {
+
+  color: #000000; /* Force Black text */
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding-top: 1.5rem;
+  margin: 0;
+  text-align: left;
+}
+
+/* Bottom-Right: Experience and Score */
+.statusGroup {
+  align-self: flex-end; /* Pushes the group to the right */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto; /* Ensures it stays at the bottom */
+}
+
+/* Style for the Experience Text */
+.experienceBadge {
+  color: #475569; /* Slate grey for contrast */
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.justificationText{
+  color: #eb3434;
+  padding-top: 2rem;
+  font-size: medium;
+  font-weight: bolder;
+}
+
+/* Style for the Score */
+.simpleScoreBadge {
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #133d81;
+}
+
+/* --- LOADER OVERLAY --- */
+/* The backdrop that covers the entire screen */
+.loaderOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.7); /* Light mode with transparency */
+  backdrop-filter: blur(10px); /* The "Blur" effect */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Ensure it stays on top */
+}
+
+/* Container for text and spinner */
+.loaderContent {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #1a1a1a;
+  font-family: 'Inter', sans-serif;
+}
+
+/* The Spinner Animation */
+.spinner {
+  color: #c60000; /* Modern AI Blue */
+  animation: spin 1s linear infinite;
+}
+
+.loaderContent p {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.loaderContent span {
+  font-size: 1rem;
+  color: #666;
+  max-width: 300px;
+}
+
+/* Keyframes for the rotation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* Experience Badge - Clean & Professional */
+.experienceBadge {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+}
+
+/* AI Score Badge - Matching your screenshot */
+.scoreBadge {
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: inline-block;
+}
+
+.highConfidence {
+  background-color: #000000; /* Black as per your screenshot */
+  color: #ffffff;
+}
+
+.medConfidence {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.lowConfidence {
+  background-color: #94a3b8;
+  color: #ffffff;
+}
+
+/* Action Buttons */
+.iconBtn, .iconBtnDelete {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.iconBtn:hover { background: #eff6ff; color: #2563eb; }
+.iconBtnDelete:hover { background: #fef2f2; color: #ef4444; }

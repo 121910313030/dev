@@ -1,71 +1,78 @@
-// import { useState } from 'react';
-// import { useNavigate, Link } from 'react-router-dom';
-// import './Signup.css';
+import axios from "axios";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import styles from "./Signup.module.css";
 
-// const Signup = () => {
-//   const navigate = useNavigate();
+const Signup = () => {
+  const navigate = useNavigate();
 
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-//   const [error, setError] = useState('');
-//   const [success, setSuccess] = useState('');
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
 
-//   const handleSignup = async (e) => {
-//     e.preventDefault();
-//     setError('');
-//     setSuccess('');
+    if (!email || !password) {
+      setError("Email and password are required");
+      return;
+    }
 
-//     if (!email || !password) {
-//       setError('Email and password are required');
-//       return;
-//     }
+    try {
+      await axios.post("http://localhost:8000/signup/", {
+        email,
+        password,
+      });
+      setSuccess("Account created! Redirecting...");
+      setTimeout(() => navigate("/login"), 2000);
+    } catch (err) {
+      setError("Server error. Try again.");
+    }
+  };
 
-//     try {
-//       const res = await fetch('http://localhost:8000/signup', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ email, password }),
-//       });
-//       const data = await res.json();
+  return (
+    <div className={styles["pageContainer"]}>
+      <div className={styles["cardBox"]}>
+        <h2 className={styles["title"]}>Create Account</h2>
 
-//       if (res.ok) {
-//         setSuccess('Signup successful! Redirecting to login...');
-//         setTimeout(() => navigate('/login'), 2000); 
-//       } else {
-//         setError(data.message || 'Signup failed');
-//       }
-//     } catch (err) {
-//       setError('Server error. Try again.');
-//     }
-//   };
+        <form onSubmit={handleSignup} className={styles["formStack"]}>
+          <div className={styles["fieldBlock"]}>
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-//   return (
-//     <div className="auth-wrapper">
-//       <h2>Sign Up</h2>
-//       <form onSubmit={handleSignup}>
-//         <input
-//           type="email"
-//           placeholder="Email"
-//           value={email}
-//           onChange={(e) => setEmail(e.target.value)}
-//         />
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//         />
-//         {error && <p className="error-text">{error}</p>}
-//         {success && <p className="success-text">{success}</p>}
-//         <button type="submit">Sign Up</button>
-//         <p>
-//             Existing User? <Link to="/login">Login</Link>
-//       </p>
-//       </form>
-      
-//     </div>
-//   );
-// };
+          <div className={styles["fieldBlock"]}>
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
 
-// export default Signup;
+          {error && <p className={styles["errorMsg"]}>{error}</p>}
+          {success && <p className={styles["successMsg"]}>{success}</p>}
+
+          <button className={styles["primaryBtn"]} type="submit">
+            Sign Up
+          </button>
+
+          <p className={styles["bottomText"]}>
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Signup;
