@@ -3,45 +3,43 @@ from groq import Groq
 
 client = Groq()
 
-def get_resume_score(resumes, jd_text):
-
+def get_resume_score(resumes, jd_text, weights):
     results = []
 
     for resume in resumes:
-
         prompt = f"""
-        Evaluate how well the resume matches the job description.
+        Evaluate how well the resume matches the job description and assess data quality.
 
         SCORING RULES:
-        - 90–100 → Excellent match (skills + experience match strongly)
-        - 70–89 → Good match (most skills match, minor gaps)
-        - 50–69 → Average match (some skills match)
-        - 30–49 → Weak match (few relevant skills)
-        - 0–29 → Poor match (not relevant)
+        - 90–100 → Excellent match
+        - 70–89 → Good match
+        - 50–69 → Average match
+        - 30–49 → Weak match
+        - 0–29 → Poor match
 
-        EVALUATION CRITERIA:
-        1. Skills match (50%)
-        2. Experience match (30%)
-        3. Semantic similarity (20%) (related technologies count)
+        CONFIDENCE BADGE RULES (Based on Resume Formatting/Structure):
+        - "High": Well-structured text, clear sections (Experience, Education, Skills).
+        - "Medium": Readable but some formatting is inconsistent or sections are merged.
+        - "Low": Garbled text, missing key headers, or poor OCR/extraction quality.
 
-        IMPORTANT RULES:
-        - Do NOT give 0 unless completely unrelated
-        - Focus on core backend skills first
-        - Related technologies count (Flask ≈ Django)
+        EVALUATION CRITERIA (USE THESE EXACT PERCENTAGES):
+        1. Skills match ({weights['skills']}%)
+        2. Experience match ({weights['experience']}%)
+        3. Semantic similarity ({weights['semantic']}%)
 
-        Compare this resume with the job description.
         Job Description:
         {jd_text}
 
-        Resume:
+        Resume Text:
         {resume['text']}
 
-        Return ONLY a raw JSON object. No markdown, no backticks, no preamble.
+        Return ONLY a raw JSON object:
         {{
-        "score": number between 0 and 100,
-        "skills": ["skill1","skill2"],
+        "score": number,
+        "confidence_level": "High" | "Medium" | "Low",
         "experience_years": number,
-        "reason": "short explanation"
+        "reason": "short explanation",
+        "formatting_note": "brief comment on resume structure"
         }}
         """
 
@@ -49,20 +47,20 @@ def get_resume_score(resumes, jd_text):
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
             temperature=0,
+            response_format={"type": "json_object"}
         )
 
         content = response.choices[0].message.content
-
-        print("AI raw response:", content)  
 
         try:
             parsed = json.loads(content)
         except:
             parsed = {
                 "score": 0,
-                "skills": [],
+                "confidence_level": "Low",
                 "experience_years": 0,
-                "reason": content
+                "reason": "Failed to parse AI response",
+                "formatting_note": "Technical error during evaluation"
             }
 
         results.append(parsed)

@@ -4,10 +4,13 @@ import styles from './HumanInLoop.module.css';
 import Overview from "./Overview";
 import RecentActivity from "./RecentActivity";
 import BatchData from "./BatchData";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LayoutDashboard, History, LogOut, Bot, ChevronLeft } from "lucide-react";
+import API from "../../api/api";
 
-const HumanInLoop = () => {
+const HumanInLoop = ({onLogout}) => {
+  const navigate = useNavigate();
+  
   const [batches, setBatches] = useState([]);
   const [activeTab, setActiveTab] = useState("overview"); // overview, activity, batch-details
   const [selectedBatchId, setSelectedBatchId] = useState(null);
@@ -16,9 +19,19 @@ const HumanInLoop = () => {
     fetchBatches();
   }, []);
 
+  const handleLogout = () => {
+
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user_details");
+
+    if (onLogout) onLogout();
+    navigate("/login");
+  };
+
   const fetchBatches = async () => {
     try {
       const res = await axios.get("http://127.0.0.1:8000/api/batches/");
+      console.log("Batches received:", res.data.length);
       setBatches(res.data);
     } catch (err) {
       console.error("Connection Error:", err);
@@ -43,7 +56,7 @@ const HumanInLoop = () => {
             <History size={20} /> Recent Activity
           </button>
         </nav>
-        <button className={styles.logoutBtn}><LogOut size={18} /> Logout</button>
+        <button className={styles.logoutBtn} onClick={handleLogout}><LogOut size={18} /> Logout</button>
       </aside>
 
       <main className={styles.mainContent}>

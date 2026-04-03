@@ -1,75 +1,91 @@
 import { useState } from 'react';
-import { useNavigate , Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home as HomeIcon } from "lucide-react";
+import { Home as HomeIcon , Loader2} from "lucide-react";
 import styles from './Login.module.css';
 import axios from 'axios';
-
 
 const Login = () => {
   const navigate = useNavigate();
 
-
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-
+  const [loading, setLoading] = useState(false);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  // --- NEW: Instant Error Clearing Logic ---
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    
+    if (emailError) setEmailError('');
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    
+    if (passwordError) setPasswordError('');
+  };
 
   const handleLogin = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    let valid = true;
 
-  // Reset errors at the start of every attempt
-  setEmailError('');
-  setPasswordError('');
+    // Reset errors before validation
+    setEmailError("");
+    setPasswordError("");
 
-  let valid = true;
-
-  if (!email) {
-    setEmailError("Email is Required");
-    valid = false;
-  }
-  if (!password) {
-    setPasswordError("Password is Required");
-    valid = false;
-  }
-
-  if (!valid) return;
-
-  try {
-    const response = await axios.post("http://localhost:8000/login/", {
-      email: email,
-      password: password
-    });
-
-    // If successful
-    if (response.status === 200 || response.status === 201) {
-      navigate("/dashboard");
+    if (!email) {
+      setEmailError("Email is Required");
+      valid = false;
     }
-  } catch (err) {
-    // Axios puts the server response in err.response
-    if (err.response) {
-      const data = err.response.data;
+    if (!password) {
+      setPasswordError("Password is Required");
+      valid = false;
+    }
 
-      // Check if backend sent specific error types
-      // Adjust 'errorType' or 'field' based on what your Django backend actually sends
-      if (data.errorType === 'email' || data.email) {
-        setEmailError(data.message || "Invalid Email Address");
-      } 
-      else if (data.errorType === 'password' || data.password) {
-        setPasswordError(data.message || "Incorrect Password");
-      } 
-      else {
-        // Fallback for general "Invalid Credentials"
-        setPasswordError("Invalid email or password");
+    if (!valid) return;
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post("http://localhost:8000/login/", {
+        email: email,
+        password: password
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        // FIX: Match your Django view structure {"tokens": {"access": "...", "refresh": "..."}}
+        const { access, refresh } = response.data.tokens;
+
+        localStorage.setItem('access_token', access);
+        localStorage.setItem('refresh_token', refresh);
+
+        navigate("/dashboard");
       }
-    } else {
-      // Network error or server down
-      setPasswordError("Server error. Try again later");
+    } catch (err) {
+      if (err.response) {
+        const data = err.response.data;
+        
+        // Map backend errorType to frontend state
+        if (data.errorType === 'email') {
+          setEmailError(data.message || "No Account found with this Email");
+        } else if (data.errorType === 'password') {
+          setPasswordError("Invalid Password");
+          console.log(data.message)
+        } else {
+          setPasswordError(data.message || "Invalid credentials");
+        }
+      } else {
+        setPasswordError("Server error. Try again later");
+      }
+    }finally {
+    setLoading(false); // ✅ Stop the loader (even if it fails)
     }
-  }
-};
+  };
 
   return (
     <div className={`${styles["auth-wrapper"]} ${styles["crimson-theme"]}`}>
@@ -91,16 +107,14 @@ const Login = () => {
           </p>
         </header>
 
-        {/* FORM ADDED HERE */}
         <form className={styles["login-form"]} onSubmit={handleLogin}>
-
           <div className={styles["crimson-input-group"]}>
             <label>Email</label>
             <input
               type="email"
               placeholder="recruiter@agency.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange} // Using new handler
             />
             {emailError && <p className={styles["error-text"]}>{emailError}</p>}
           </div>
@@ -111,25 +125,37 @@ const Login = () => {
               type="password"
               placeholder="••••••••"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange} // Using new handler
             />
             {passwordError && <p className={styles['error-text']}>{passwordError}</p>}
           </div>
 
-          {/* BUTTON TYPE CHANGED */}
-          <button className={styles["btn-primary-crimson"]} type="submit">
-            LogIn
+          <button 
+            className={styles["btn-primary-crimson"]} 
+            type="submit" 
+            disabled={loading} // Disable button so they can't click twice
+          >
+            {loading ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                <Loader2 className={styles.spinner} size={20} /> 
+                <span>Logging In...</span>
+              </div>
+            ) : (
+              "LogIn"
+            )}
           </button>
+          
           <p className={styles["bottomText"]}>
-                      Doesn't have an account? <Link to="/signup">Signup</Link>
+            Doesn't have an account? <Link to="/signup">Signup</Link>
           </p>
+          
           <p className={styles["bottomTextHome"]}>
             <Link to="/" className={styles["home-link"]}>
-              <HomeIcon size={35} style={{ marginRight: "1px", marginTop:"4px" }} /> 
+              <HomeIcon size={35} style={{ marginRight: "1px", marginTop: "4px" }} />
             </Link>
           </p>
         </form>
-      </motion.div> 
+      </motion.div>
     </div>
   );
 };

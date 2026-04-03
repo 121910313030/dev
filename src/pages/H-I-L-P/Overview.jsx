@@ -3,7 +3,10 @@ import styles from './Overview.module.css';
 import { LayoutDashboard, FileText, TrendingUp, CheckCircle } from "lucide-react";
 
 const Overview = ({ batches, setTab }) => {
-  const totalResumes = batches.reduce((sum, b) => sum + (parseInt(b.resume_count) || 0), 0);
+  const totalResumes = batches.reduce((sum, b) => {
+    const count = parseInt(b.resume_count) || 0;
+    return sum + count;
+  }, 0);
 
   return (
     <div className={styles.fadeUp}>

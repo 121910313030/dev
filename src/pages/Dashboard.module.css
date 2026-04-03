@@ -153,63 +153,128 @@
   width: 52vw;
   height: 65vh;
   background: #fafafa;
+  gap: 1rem; 
 }
 
 /* --- CANDIDATE CARDS --- */
+
 .candidate-card {
   background: #ffffff !important;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #2b85f9;
   border-radius: 12px;
-  padding: 0.5rem;
+  padding: 1.25rem 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Spreads the 3 columns out */
+  gap: 2rem; /* Gap between sections */
   margin-bottom: 1rem;
   transition: all 0.2s ease;
   cursor: pointer;
-  
-  /* Layout setup */
+}
+
+
+/* LEFT COLUMN */
+.nameColumn {
   display: flex;
-  flex-direction: column;
-  min-height: 120px; /* Gives space for the split layout */
-  justify-content: space-between; 
+  align-items: start;
+  gap: 12px;
+  flex: 1; 
+  min-width: 180px;
+  
 }
-
-.candidate-card:hover {
-  border-color: #2563eb;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
-  transform: scale(1.01);
-}
-
-/* Top-Left: Name/Rank */
-.infoGroup h3 {
-
-  color: #000000; /* Force Black text */
-  font-size: 1.25rem;
-  font-weight: 700;
-  padding-top: 1.5rem;
-  margin: 0;
-  text-align: left;
-}
-
-/* Bottom-Right: Experience and Score */
-.statusGroup {
-  align-self: flex-end; /* Pushes the group to the right */
+.profileIcon {
+  /* width: 60px;
+  height: 60px; */
+  background: #033160;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: auto; /* Ensures it stays at the bottom */
+  justify-content: center;
+  /* padding-right: 4px; */
 }
 
-/* Style for the Experience Text */
-.experienceBadge {
-  color: #475569; /* Slate grey for contrast */
-  font-weight: 500;
-  font-size: 0.9rem;
+.candidateName {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #000;
+  margin: 0;
 }
 
-.justificationText{
-  color: #eb3434;
-  padding-top: 2rem;
-  font-size: medium;
+/* MIDDLE COLUMN (The Progress Bar) */
+.progressColumn {
+  flex: 2; /* Takes 50% space - makes it the center focus */
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #142022;
+  font-size: large;
   font-weight: bolder;
+}
+
+.matchLabel {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #515151;
+  text-transform: uppercase;
+}
+
+.progressContainer {
+  width: 120%;
+  height: 20px; /* Thicker bar for better visibility */
+  background: #b8c7d6;
+  border-radius: 20px;
+  padding: 2px;
+  overflow: hidden;
+  padding-right: 1px;
+}
+
+.progressBar {
+  height: 100%;
+  background: #1a9005; /* High contrast black */
+  border-radius: 20px;
+  transition: width 1s ease-in-out;
+}
+
+/* RIGHT COLUMN */
+.experienceColumn {
+  flex: 1; /* Takes 25% space */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Pins content to the right edge */
+}
+
+.experienceLabel {
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: #5f3300;
+  text-transform: uppercase;
+}
+
+.experienceValue {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #154e83;
+}
+
+/* Active State */
+.activeCard {
+  border-color: #ef4444 !important;
+  background: #fffafa !important;
+}
+
+/* --- ANALYTICS TEXT (Right Sidebar) --- */
+.justificationText {
+  color: #334155; /* Changed from red to slate for readability */
+  padding-top: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-weight: 500;
 }
 
 /* Style for the Score */
@@ -325,3 +390,310 @@
 
 .iconBtn:hover { background: #eff6ff; color: #2563eb; }
 .iconBtnDelete:hover { background: #fef2f2; color: #ef4444; }
+
+
+.crimson-panel-analytics {
+  background-color: #ffffff; 
+  color: #0e141a;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #003e9c; 
+  height: 85%;
+}
+
+.panel-title { 
+  color: #00468b; 
+  font-size: 1.1rem; 
+  font-weight: 600;
+  margin-bottom: 1.25rem; 
+  letter-spacing: 0.5px;
+}
+
+.candidate-name-small { 
+  color: #002355; 
+  font-size: 1rem; 
+  margin-bottom: 2rem; 
+  font-weight: bolder;
+
+}
+
+/* Container for the gauge and centered text */
+.gauge-container {
+  position: relative;
+  width: 110px; 
+  height: 70px; 
+  margin-top: 10px;
+  margin-left: 55px;
+}
+
+.gauge-chart {
+  width: 100%;
+  height: 100%;
+}
+
+/* Gray background arc */
+.gauge-bg {
+  stroke: #d2d2d2; /* Solid Slate gray from your screenshot */
+}
+
+/* Blue progress arc */
+.gauge-fill {
+  stroke: #260090; 
+  transition: stroke-dasharray 0.9s ease-out;
+}
+
+/* Percentage text centered inside the gauge */
+.gauge-text {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #cb0000;
+}
+
+/* Updated Score Text Info on the right of gauge */
+.score-text-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.score-text-info p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #ca0303;
+  font-weight: 500;
+}
+
+.score-text-info span {
+  font-size: 1rem;
+  color: #060505;
+  display: block;
+  margin-top: 4px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+/* .score-text-info p { margin: 0; font-size: 0.95rem; color: #f05c5c; } */
+.score-text-info span { font-size: 1rem; color: #000000; display: block; margin-top: 4px; font-family: 'Times New Roman', Times, serif; }
+
+/* Alignment Bar */
+.alignment-section { margin-bottom: 2rem; padding: 0 5px; }
+.label-row { 
+  display: flex; 
+  justify-content: space-between; 
+  font-weight: bold;
+  font-size: medium;
+  margin-bottom: 1rem; 
+  color: #00183a;
+  letter-spacing: 0.5px;
+  
+}
+
+.progress-bar-bg { height: 10px; background: #adadad; border-radius: 5px; }
+.progress-bar-fill { 
+  height: 100%; 
+  background: #9e7700; /* Solid Blue */
+  border-radius: 5px; 
+}
+
+
+.summary-section h5 { 
+  color: #ce0202; 
+  text-transform: uppercase;
+  /* font-size: 0.75rem; */
+  letter-spacing: 1px;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 0.5rem;
+  font-weight: bolder;
+  /* font-family: 'Times New Roman', Times, serif; */
+  
+}
+
+.justification-box {
+  background-color: #ffffff; /* Solid dark contrast */
+  padding: 1rem;
+  border-radius: 8px;
+  border:  solid #3b82f6; /* Accent blue line */
+}
+
+.justification-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #3c0808;
+  margin: 0;
+  text-align: justify;
+}
+
+/* Optional: Highlight key terms if you use <strong> in your string */
+.justification-text strong {
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+/* --- 1. MODAL OVERLAY --- */
+/* This covers the whole screen and blurs the background */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4); /* Dark semi-transparent overlay */
+  backdrop-filter: blur(6px);    /* Modern blur effect */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;                 /* Ensures it's above everything */
+}
+
+/* --- 2. MODAL BOX --- */
+.modalContent {
+  background: #ffffff;
+  width: 90%;
+  max-width: 440px;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+/* --- 3. HEADER & CLOSE BUTTON --- */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  color: #1a1a1a;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.closeIcon {
+  background: #f3f4f6;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.closeIcon:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+/* --- 4. BODY & SLIDERS --- */
+.modalBody p {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 25px;
+}
+
+.modalSliderGroup {
+  margin-bottom: 22px;
+}
+
+.sliderLabelRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.labelTitle {
+  text-transform: capitalize;
+  color: #374151;
+}
+
+.labelValue {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.modalSlider {
+  width: 100%;
+  height: 6px;
+  border-radius: 10px;
+  background: #e5e7eb;
+  outline: none;
+  cursor: pointer;
+  accent-color: #ef4444; /* Standard Crimson Red for the handle */
+}
+
+/* --- 5. STATUS & FOOTER --- */
+.modalStatus {
+  text-align: right;
+  margin-top: 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.modalFooter {
+  margin-top: 30px;
+}
+
+.btnApply {
+  width: 100%;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.2s ease;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.btnApply:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.btnApply:active {
+  transform: translateY(0);
+}
+
+/* --- 6. SIDEBAR TRIGGER BUTTON --- */
+/* The button used to open the modal */
+.btnOpenModal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnOpenModal:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.02);
+}

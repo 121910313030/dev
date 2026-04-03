@@ -5,7 +5,11 @@ from .serializer import ResumeSerializer
 from .ai_scoring import get_resume_score
 from .signup import signup_user
 import fitz
-
+from .adminuser import admin_overview
+from .login import login_user
+from .models import Resume
+from django.shortcuts import get_object_or_404
+import json
 
 def get_pdf_text(file_stream):
     text = ""
@@ -27,16 +31,11 @@ def get_pdf_text(file_stream):
 
 @api_view(['GET', 'POST'])
 def resume_api(request):
-
     if request.method == "GET":
-        # Check if the frontend is asking for a specific batch
         batch_id = request.query_params.get('batch_id')
-        
         if batch_id:
-            # ONLY return resumes from this specific upload session
             data = Resume.objects.filter(batch_id=batch_id).order_by('-score')
         else:
-            # Fallback: return everything (or you can return error if batch is required)
             data = Resume.objects.all().order_by('-uploaded_at')
             
         serializer = ResumeSerializer(data, many=True)
@@ -48,11 +47,22 @@ def resume_api(request):
 
         if not files:
             return Response({"error": "No resumes uploaded"}, status=400)
+        
+        default_weights = {"skills": 50, "experience": 30, "semantic": 20}
+        raw_weights = request.data.get("weights")
+        
+        try:
+            custom_weights = json.loads(raw_weights) if raw_weights else default_weights
+        except Exception:
+            custom_weights = default_weights
 
-        # --- NEW: Create a Batch Record for this upload session ---
+        if not files:
+            return Response({"error": "No resumes uploaded"}, status=400)
+        
+
+        # Create Batch
         batch_name = f"Upload of {len(files)} resumes"
         current_batch = ResumeBatch.objects.create(name=batch_name)
-        # ----------------------------------------------------------
 
         extracted_text_jd = get_pdf_text(jd_file) if jd_file else "General Analysis"
         resumes_for_ai = []
@@ -66,17 +76,31 @@ def resume_api(request):
             })
 
         try:
-            ai_results = get_resume_score(resumes_for_ai, extracted_text_jd)
+            ai_results = get_resume_score(resumes_for_ai, extracted_text_jd, custom_weights)
         except Exception as e:
-            current_batch.delete() # Clean up the empty batch if AI fails
+            current_batch.delete() 
             return Response({"error": "AI scoring failed"}, status=500)
 
         candidates = []
 
         for i, result in enumerate(ai_results):
-            # Check multiple possible keys from AI result to avoid the "0" default
-            ext_experience = result.get("experience_years") or result.get("experience") or result.get("years") or 0
+            # 1. SAFETY CASTING: Convert potential strings/None to Integers
+            try:
+                # We use a helper to strip "%" or handle None
+                raw_score = result.get("experience_score") or result.get("experience_match") or 0
+                exp_val = int(str(raw_score).replace('%', '').strip())
+                
+                raw_years = result.get("experience_years") or result.get("experience") or 0
+                ext_experience = int(str(raw_years).replace('+', '').strip())
+            except (ValueError, TypeError):
+                exp_val = 0
+                ext_experience = 0
+
+            conf_level = str(result.get("confidence_level", "medium")).lower()
+            if conf_level not in ['high', 'medium', 'low']:
+                conf_level = 'medium'
             
+            # 2. CREATE OBJECT
             resume_obj = Resume.objects.create(
                 batch=current_batch,
                 resume_file=resumes_for_ai[i]["file_obj"],
@@ -84,67 +108,67 @@ def resume_api(request):
                 extracted_text1=resumes_for_ai[i]["text"],
                 extracted_text2=extracted_text_jd,
                 score=result.get("score", 0),
-                experience_years = result.get('experience_years', 0),
-                analysis_reason=result.get("reason", "No reason provided")
+                experience_years=ext_experience, 
+                experience_score=exp_val, # Ensure this is an INT
+                analysis_reason=result.get("reason", "No reason provided"),
+                confidence_level=conf_level,
+                formatting_note=result.get("formatting_note", "Standard format detected."),
+                raw_ai_response=result,
             )
             
+            # 3. APPEND TO CANDIDATES
             candidates.append({
                 "id": resume_obj.id,
-                "batch_id": current_batch.id, # Send batch ID back to frontend
+                "batch_id": current_batch.id,
                 "name": resumes_for_ai[i]["name"],
-                "score": result["score"],
-                "experience_years": "Determine total professional years. If the text says '5 years', return 5. If it's an intern, return 0. RETURN ONLY AN INTEGER.",
-                "justification": result["reason"]
+                "score": resume_obj.score,
+                "experience_years": ext_experience, 
+                "confidence": resume_obj.confidence_level,
+                "justification": resume_obj.analysis_reason,
+                
+                # PERSISTENCE FIX: Send BOTH keys so React never sees a 0%
+                "experience_score": resume_obj.experience_score,
+                "experience_match": resume_obj.experience_score, 
             })
 
         return Response({
-            "batch_id": current_batch.id, # Frontend uses this to redirect to dashboard
+            "batch_id": current_batch.id,
             "candidates": candidates
         })
 
-
 @api_view(['GET'])
 def batch_list_api(request):
-    # This is what populates your "Recent Activity" and Dashboard Stats
-    batches = ResumeBatch.objects.all().order_by('-created_at')
+    # FIX 4: Use prefetch_related for speed and to ensure all related resumes are caught
+    batches = ResumeBatch.objects.prefetch_related('resumes').all().order_by('-created_at')
+    
     data = []
     for b in batches:
         resumes = b.resumes.all()
-        # Calculate avg score for the dashboard
-        avg = sum(r.score or 0 for r in resumes) / resumes.count() if resumes.exists() else 0
+        r_count = resumes.count()
+        
+        
+        # Avoid division by zero
+        avg = sum(r.score or 0 for r in resumes) / r_count if r_count > 0 else 0
         
         data.append({
             "id": b.id,
             "name": f"Batch Analysis #{b.id}",
             "date": b.created_at.strftime('%d %b, %Y'),
             "time": b.created_at.strftime('%I:%M %p'),
-            "resume_count": resumes.count(),
+            "resume_count": r_count,
             "avg_score": round(avg, 1)
         })
     return Response(data)
 
-
-@api_view(['PUT', 'DELETE'])
+@api_view(['PATCH', 'DELETE'])
 def resume_detail_api(request, pk):
-    """
-    Handles actions on a single resume: 
-    Updating the score (Human-in-the-loop) or Deleting it.
-    """
-    try:
-        resume = Resume.objects.get(pk=pk)
-    except Resume.DoesNotExist:
-        return Response({"error": "Resume not found"}, status=404)
 
-    if request.method == "PUT":
-        # Supports the manual score update from AdminDashboard.js
-        new_score = request.data.get("score")
-        if new_score is not None:
-            resume.score = new_score
-            resume.save()
-            return Response({"message": "Score updated successfully"})
-        return Response({"error": "No score provided"}, status=400)
+    resume = get_object_or_404(Resume, pk=pk)
 
-    if request.method == "DELETE":
-        # Supports the Trash icon in AdminDashboard.js
+    if request.method == 'PATCH':
+        resume.score = request.data.get('score', resume.score)
+        resume.save()
+        return Response({"message": "Updated"})
+    elif request.method == 'DELETE':
         resume.delete()
-        return Response({"message": "Deleted successfully"}, status=204)
+        return Response(status=204)
