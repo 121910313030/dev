@@ -1,10 +1,10 @@
-# 🤖 AI Resume Analyser & Job Match Assistant
+# 🤖 AI Resume Analyser & Job Match
 
 ## 📌 Overview
 
-The **AI Resume Analyser & Job Match Assistant** is a web-based application that helps job seekers and recruiters evaluate resumes efficiently using Generative AI.
+The **AI Resume Analyser & Job Match ** is a web-based application that helps  recruiters evaluate resumes efficiently using Generative AI.
 
-The system analyzes uploaded resumes, compares them with job descriptions, calculates a match percentage, and provides actionable improvement suggestions — similar to a real-world Applicant Tracking System (ATS).
+The system analyzes uploaded resumes, compares them with job descriptions, calculates a match percentage, and provides — similar to a real-world Applicant Tracking System (ATS).
 
 ---
 
@@ -14,7 +14,7 @@ In modern recruitment:
 
 - Companies receive hundreds of resumes for each job.
 - Manual screening is time-consuming and inconsistent.
-- Job seekers struggle to understand how well their resume matches a job role.
+- recruiters struggle to understand how well their resume matches a job role.
 
 This project solves these problems using AI-powered resume analysis and job matching.
 

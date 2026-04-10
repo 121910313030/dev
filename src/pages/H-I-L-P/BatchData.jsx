@@ -5,11 +5,13 @@ import { Eye, Trash2, FileText, X } from "lucide-react"; // Added X icon
 import { color } from "framer-motion";
 import { Await } from "react-router-dom";
 import Swal from 'sweetalert2';
+import { toast } from "react-toastify";
 
 const BatchData = ({ batchId, onBack }) => {
   const [resumes, setResumes] = useState([]);
   const [selectedResume, setSelectedResume] = useState(null);
   const [newScore, setNewScore] = useState("");
+  const [loading, setLoading] = useState(false);
   
   useEffect(() => {
     const fetchResumes = async () => {
@@ -20,20 +22,34 @@ const BatchData = ({ batchId, onBack }) => {
   }, [batchId]);
 
   const handleUpdateScore = async (id) => {
-    try{
-      const token = localStorage.getItem("access_token");
-      await axios.patch(`http://127.0.0.1:8000/api/resumes/${id}/`,
-        {score: newScore},
-        {headers: {Authorization:'Bearer ${token}'}}
-      );
-      alert("Score updated");
+  // 1. FRONTEND VALIDATION
+  if (newScore > 100 || newScore < 0) {
+    toast.error("Score must be between 0 and 100.");
+    return; // Stop the function here
+  }
 
-      setResumes(resumes.map(r => r.id === id ? {...r, score: newScore} : r));
-      setSelectedResume(null);
-    }catch(err){
-      alert("failed to update score ");
-    }
-  };
+  try {
+    setLoading(true);
+    
+    // 2. API CALL (Using backticks for the URL)
+    const token = localStorage.getItem("access_token");
+    await axios.patch(`http://127.0.0.1:8000/api/resumes/${id}/`,
+      { score: newScore },
+      { headers: { Authorization: `Bearer ${token}` } } // Corrected syntax
+    );
+    
+    toast.error("Score updated successfully!");
+
+    // 3. UI UPDATE
+    setResumes(resumes.map(r => r.id === id ? { ...r, score: newScore } : r));
+    setSelectedResume(null);
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to update score. Check if you are logged in.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleDelete = async(id) => {
     if (window.confirm("Are you sure you want to delete this resume?")){
@@ -45,8 +61,10 @@ const BatchData = ({ batchId, onBack }) => {
          });
          setResumes(resumes.filter(r => r.id !== id));
          setSelectedResume(null);
+         toast.error("Resume deleted");
       }catch(err){
-        alert("delete failed");3
+        alert("Failed to delete resume.");
+        
       }
     }
   }
@@ -112,7 +130,7 @@ const BatchData = ({ batchId, onBack }) => {
             <div className={styles.modalHeader}>
               <h3>Resume Preview</h3>
               <button className={styles.closeBtn} onClick={() => setSelectedResume(null)}>
-                <X size={24} />
+                <X size={24} color="black" />
               </button>
             </div>
             <div className={styles.modalBody}>
@@ -135,6 +153,7 @@ const BatchData = ({ batchId, onBack }) => {
                   <div className={styles["actionSection"]}>
                     <label>Edit Score:</label>
                     <div className={styles["inputGroup"]}>
+                      
                       <input 
                         type="text" 
                         placeholder={selectedResume.score}

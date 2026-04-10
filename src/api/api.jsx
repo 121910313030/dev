@@ -49,4 +49,22 @@ export const uploadResume = async (formData) => {
   }
 };
 
+// --- PROFILE ACTIONS ---
+
+export const getProfile = async () => {
+  const response = await API.get("/manage-account/");
+  return response.data;
+};
+
+export const updateProfile = async (data) => {
+  const response = await API.put("/manage-account/", data);
+  return response.data;
+};
+
+export const changePassword = async (data) => {
+  const response = await API.post("/update-password/", data);
+  return response.data;
+};
+
+
 export default API;

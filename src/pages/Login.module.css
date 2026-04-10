@@ -15,7 +15,7 @@
   border-radius: 15px;
   border: 1px solid #e2e8f0;
   width: 420px;
-  height: 500px;
+  height: 520px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -161,7 +161,6 @@
   }
 }
 
-/* Optional: Make the button look slightly faded when disabled */
 .btn-primary-crimson:disabled {
   opacity: 0.7;
   cursor: not-allowed;

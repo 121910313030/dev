@@ -202,10 +202,15 @@
 
 /* MIDDLE COLUMN (The Progress Bar) */
 .progressColumn {
-  flex: 2; /* Takes 50% space - makes it the center focus */
+  flex: 2; 
   display: flex;
   flex-direction: column;
   gap: 5px;
+}
+
+.matchPercentage {
+  margin-left: auto;
+  color: #003e9c;
 }
 
 .progressHeader {
@@ -574,11 +579,13 @@
   color: #1a1a1a;
   font-size: 1.25rem;
   font-weight: 700;
+  position: relative;
 }
 
 .closeIcon {
   background: #f3f4f6;
   border: none;
+  z-index: 100;
   border-radius: 50%;
   width: 32px;
   height: 32px;
@@ -586,13 +593,15 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #6b7280;
+  /* color: #ffffff; */
   transition: all 0.2s ease;
+  color: #000000 !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .closeIcon:hover {
   background: #fee2e2;
-  color: #ef4444;
+  color: #ffffff !important;
 }
 
 /* --- 4. BODY & SLIDERS --- */
@@ -651,7 +660,7 @@
 
 .btnApply {
   width: 100%;
-  background: #ef4444;
+  background: #d20101;
   color: white;
   border: none;
   padding: 14px;
@@ -664,7 +673,7 @@
 }
 
 .btnApply:hover {
-  background: #dc2626;
+  background: #180083;
   transform: translateY(-1px);
 }
 
@@ -682,7 +691,7 @@
   width: 100%;
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  color: #4b5563;
+  color: #2b2b2b;
   padding: 12px;
   border-radius: 10px;
   margin-bottom: 15px;
@@ -693,7 +702,7 @@
 }
 
 .btnOpenModal:hover {
-  border-color: #ef4444;
-  color: #ef4444;
+  border-color: #b30707;
+  color: #070052;
   background: rgba(239, 68, 68, 0.02);
 }

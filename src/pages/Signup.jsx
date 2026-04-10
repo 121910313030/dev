@@ -29,7 +29,7 @@ const Signup = () => {
       setSuccess("Account created! Redirecting...");
       setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      setError("Server error. Try again.");
+      setError(err.response?.data?.message || "Signup failed");
     }
   };
 

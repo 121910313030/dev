@@ -6,7 +6,7 @@ client = Groq()
 def get_resume_score(resumes, jd_text, weights):
     results = []
 
-    for resume in resumes:
+    for resume in resumes: 
         prompt = f"""
         Evaluate how well the resume matches the job description and assess data quality.
 
@@ -35,7 +35,7 @@ def get_resume_score(resumes, jd_text, weights):
 
         Return ONLY a raw JSON object:
         {{
-        "score": number,
+        "score": 0,
         "confidence_level": "High" | "Medium" | "Low",
         "experience_years": number,
         "reason": "short explanation",

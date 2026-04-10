@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Upload, FileText, CheckCircle, Search, AlertCircle, Loader2 , User, Settings2, X} from "lucide-react";
+import { Upload, FileText, CheckCircle, Search, AlertCircle, Loader2 , User, Settings2} from "lucide-react";
 import styles from './Dashboard.module.css';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -18,7 +18,7 @@ const Dashboard = ({ onLogout }) => {
   const [rawFiles, setRawFiles] = useState({ csv: null, jd: null });
   const [loading, setLoading] = useState(false);
 
-  // --- PERSISTENCE LOGIC: Load from localStorage on mount ---
+  
   const [candidates, setCandidates] = useState(() => {
     const saved = localStorage.getItem("last_shortlist");
     return saved ? JSON.parse(saved) : [];
@@ -100,16 +100,21 @@ const Dashboard = ({ onLogout }) => {
 
     try {
       const response = await API.post("/resumes/", formData);
-          const newCandidates = (response.data.candidates || []).map(c => ({
-        ...c,
-        // This ensures that even if the backend uses 'experience_score', 
-        // the frontend has it ready for the displayCandidate logic
-        experience_score: c.experience_score || 0 
-      }));
+      
+          const newCandidates = (response.data.candidates || []).map(c => {
+            // If the backend keeps sending 0, we can derive a percentage 
+            // based on years (e.g., 5 years = 50%, capped at 100%)
+            const derivedExpScore = c.experience_years ? Math.min((c.experience_years / 10) * 100, 100) : 0;
+
+            return {
+              ...c,
+              // Use the backend score if it's > 0, otherwise use our derived score
+              experience_score: c.experience_score > 0 ? c.experience_score : derivedExpScore
+            };
+          });
 
       setCandidates(newCandidates);
-      localStorage.setItem("last_shortlist", JSON.stringify(newCandidates));
-      
+     
       // --- PERSISTENCE LOGIC: Save to localStorage ---
       localStorage.setItem("last_shortlist", JSON.stringify(newCandidates));
 
@@ -139,7 +144,7 @@ const Dashboard = ({ onLogout }) => {
               <div className={styles.modalHeader}>
                 <h3>Scoring Parameters</h3>
                 <button className={styles.closeIcon} onClick={() => setIsModalOpen(false)}>
-                  <X size={24} />
+                  X
                 </button>
               </div>
 

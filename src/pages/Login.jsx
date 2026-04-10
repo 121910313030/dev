@@ -58,7 +58,7 @@ const Login = () => {
       });
 
       if (response.status === 200 || response.status === 201) {
-        // FIX: Match your Django view structure {"tokens": {"access": "...", "refresh": "..."}}
+
         const { access, refresh } = response.data.tokens;
 
         localStorage.setItem('access_token', access);
@@ -70,7 +70,6 @@ const Login = () => {
       if (err.response) {
         const data = err.response.data;
         
-        // Map backend errorType to frontend state
         if (data.errorType === 'email') {
           setEmailError(data.message || "No Account found with this Email");
         } else if (data.errorType === 'password') {
@@ -83,7 +82,7 @@ const Login = () => {
         setPasswordError("Server error. Try again later");
       }
     }finally {
-    setLoading(false); // ✅ Stop the loader (even if it fails)
+    setLoading(false);
     }
   };
 
@@ -151,7 +150,8 @@ const Login = () => {
           
           <p className={styles["bottomTextHome"]}>
             <Link to="/" className={styles["home-link"]}>
-              <HomeIcon size={35} style={{ marginRight: "1px", marginTop: "4px" }} />
+              <HomeIcon size={20}  />
+              Home
             </Link>
           </p>
         </form>

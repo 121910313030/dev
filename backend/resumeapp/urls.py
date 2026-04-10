@@ -6,11 +6,16 @@ from .adminuser import admin_overview
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
+from . import profile_views 
 
 urlpatterns = [
     path('api/resumes/', resume_api),
     path('api/resumes/<int:pk>/', resume_detail_api),
 
+    path('api/manage-account/', profile_views.profile_detail, name='profile-detail'),
+    path('api/update-password/', profile_views.update_password, name='update-password'),
+    path('api/update-settings/', profile_views.update_settings, name='update-settings'),
+    
     path('signup/', signup_user),
     path('api/batches/', batch_list_api, name='batch-list'),
 

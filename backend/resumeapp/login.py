@@ -17,7 +17,7 @@ def get_tokens_for_user(user):
     }
 
 @api_view(["POST"])
-@permission_classes([AllowAny]) # Ensure anyone can attempt to login
+@permission_classes([AllowAny]) 
 def login_user(request):
     email = request.data.get('email')
     password = request.data.get('password')
