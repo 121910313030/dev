@@ -49,6 +49,7 @@ export const uploadResume = async (formData) => {
   }
 };
 
+
 // --- PROFILE ACTIONS ---
 
 export const getProfile = async () => {
