@@ -54,7 +54,7 @@ def get_resume_score(resumes, jd_text, weights):
 
         try:
             parsed = json.loads(content)
-        except:
+        except json.JSONDecodeError:
             parsed = {
                 "score": 0,
                 "confidence_level": "Low",

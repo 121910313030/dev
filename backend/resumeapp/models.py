@@ -33,7 +33,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class ResumeBatch(models.Model):
     # This identifies the specific upload session
-    name = models.CharField(max_length=255, blank=True, null=True)
+    name = models.CharField(max_length=255, blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
 
     user = models.ForeignKey(
@@ -68,20 +68,20 @@ class Resume(models.Model):
     resume_file = models.FileField(upload_to='resumes/', null=True)
     jd_file = models.FileField(upload_to="jds/", null=True, blank=True)
 
-    extracted_text1 = models.TextField(blank=True, null=True)
-    extracted_text2 = models.TextField(blank=True, null=True)
+    extracted_text1 = models.TextField(blank=True) 
+    extracted_text2 = models.TextField(blank=True)
 
     score = models.IntegerField(null=True, blank=True)
     experience_years = models.IntegerField(null=True, blank=True)
     experience_score = models.IntegerField(default=0)
-    analysis_reason = models.TextField(blank=True, null=True)
+    analysis_reason = models.TextField(blank=True)
 
     confidence_level = models.CharField(
         max_length=10, 
         choices=CONFIDENCE_CHOICES, 
         default='medium'
     )
-    formatting_note = models.TextField(blank=True, null=True)
+    formatting_note = models.TextField(blank=True)
     raw_ai_response = models.JSONField(null=True, blank=True) # Recommended for PostgreSQL
     
     uploaded_at = models.DateTimeField(auto_now_add=True)

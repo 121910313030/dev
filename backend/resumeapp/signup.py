@@ -27,10 +27,10 @@ def signup_user(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    User = get_user_model()
+    user_model = get_user_model()
 
     # 2. Check if user already exists
-    if User.objects.filter(email=email).exists():
+    if user_model.objects.filter(email=email).exists():
         return Response(
             {"status": False, "message": "A user with this email already exists."},
             status=status.HTTP_400_BAD_REQUEST
@@ -39,7 +39,7 @@ def signup_user(request):
     try:
         # 3. Create the User
         # Use create_user (not create) because it handles password hashing automatically
-        user = User.objects.create_user(
+        user = user_model.objects.create_user(
             email=email,
             password=password
         )

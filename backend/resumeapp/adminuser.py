@@ -13,8 +13,6 @@ def admin_overview(request):
         average_score=Avg('resumes__score')
     ).order_by('-created_at')
 
-    # global_top_3 = Resume.objects.select_related('batch__user').order_by('-score')[:3]
-
     batch_list = []
     for b in batches:
         batch_list.append({
@@ -25,11 +23,6 @@ def admin_overview(request):
             "avg_score": round(b.average_score or 0, 1)
         })
 
-    # top_3_list = [{
-    #     "name": r.resume_file.name.split('/')[-1] if r.resume_file else "Unknown",
-    #     "score": r.score,
-    #     "processed_by": r.batch.user.email if (r.batch and r.batch.user) else "System"
-    # } for r in global_top_3]
 
     return Response({
         "batches": batch_list,

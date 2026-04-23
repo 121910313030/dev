@@ -32,6 +32,61 @@ def get_pdf_text(file_stream):
         return ""
 
 
+def extract_required_years(jd_text):
+    jd_years_match = re.search(r'(\d+)\s*(?:\+|years|year|yrs|exp)', jd_text.lower())
+    return int(jd_years_match.group(1)) if jd_years_match else 0
+
+
+def parse_weights(request_data):
+    default_weights = {"skills": 50, "experience": 30, "semantic": 20}
+    raw_weights = request_data.get("weights")
+    try:
+        return json.loads(raw_weights) if raw_weights else default_weights
+    except Exception:
+        return default_weights
+
+
+def process_resume(result, jd_required_years, resume_data):
+    try:
+        raw_years = result.get("experience_years") or result.get("experience") or 0
+        match = re.search(r'\d+', str(raw_years))
+        ext_experience = int(match.group()) if match else 0
+
+        if jd_required_years > 0:
+            alignment = (ext_experience / jd_required_years) * 100
+            exp_val = min(100, int(alignment))
+        else:
+            exp_val = 100 if ext_experience > 0 else 0
+    except Exception:
+        exp_val = 0
+        ext_experience = 0
+
+    resume_obj = Resume.objects.create(
+        batch=resume_data["batch"],
+        resume_file=resume_data["file_obj"],
+        jd_file=resume_data["jd_file"],
+        extracted_text1=resume_data["text"],
+        extracted_text2=resume_data["jd_text"],
+        score=result.get("score", 0),
+        experience_years=ext_experience,
+        experience_score=exp_val,
+        analysis_reason=result.get("reason", "No reason provided"),
+        confidence_level=str(result.get("confidence_level", "medium")).lower(),
+        raw_ai_response=result,
+    )
+
+    return {
+        "id": resume_obj.id,
+        "batch_id": resume_data["batch"].id,
+        "name": resume_data["name"],
+        "score": resume_obj.score,
+        "experience_years": ext_experience,
+        "experience_score": exp_val,
+        "confidence": resume_obj.confidence_level,
+        "justification": resume_obj.analysis_reason,
+    }
+
+
 @api_view(['GET', 'POST'])
 def resume_api(request):
     if request.method == "GET":
@@ -46,83 +101,30 @@ def resume_api(request):
 
         if not files:
             return Response({"error": "No resumes uploaded"}, status=400)
-        
-        # 1. EXTRACT JD TEXT AND REQUIRED YEARS
-        extracted_text_jd = get_pdf_text(jd_file) if jd_file else ""
-        
-        # Look for numbers near "years", "yrs", or "exp" (e.g., "3+ years")
-        jd_years_match = re.search(r'(\d+)\s*(?:\+|years|year|yrs|exp)', extracted_text_jd.lower())
-        jd_required_years = int(jd_years_match.group(1)) if jd_years_match else 0
-        
-        # Weights Logic
-        default_weights = {"skills": 50, "experience": 30, "semantic": 20}
-        raw_weights = request.data.get("weights")
-        try:
-            custom_weights = json.loads(raw_weights) if raw_weights else default_weights
-        except Exception:
-            custom_weights = default_weights
 
-        # Create Batch
-        batch_name = f"Upload of {len(files)} resumes"
-        current_batch = ResumeBatch.objects.create(name=batch_name)
+        jd_text = get_pdf_text(jd_file) if jd_file else ""
+        jd_required_years = extract_required_years(jd_text)
+        custom_weights = parse_weights(request.data)
 
-        resumes_for_ai = []
-        for file in files:
-            text = get_pdf_text(file)
-            resumes_for_ai.append({"name": file.name, "text": text, "file_obj": file})
+        current_batch = ResumeBatch.objects.create(name=f"Upload of {len(files)} resumes")
+
+        resumes_for_ai = [{"name": f.name, "text": get_pdf_text(f), "file_obj": f} for f in files]
 
         try:
-            ai_results = get_resume_score(resumes_for_ai, extracted_text_jd, custom_weights)
+            ai_results = get_resume_score(resumes_for_ai, jd_text, custom_weights)
         except Exception as e:
-            current_batch.delete() 
+            current_batch.delete()
             return Response({"error": f"AI scoring failed: {str(e)}"}, status=500)
 
-        candidates = []
-        for i, result in enumerate(ai_results):
-            try:
-                # 2. EXTRACT YEARS FROM CANDIDATE
-                raw_years = result.get("experience_years") or result.get("experience") or 0
-                # Clean strings like "5+" or "2 years" into an integer
-                ext_experience = int(re.search(r'\d+', str(raw_years)).group()) if re.search(r'\d+', str(raw_years)) else 0
-                
-                # 3. CALCULATE PROGRESS BAR (ALIGNMENT)
-                if jd_required_years > 0:
-                    # If they have 5 years and JD wants 3, they are 100% aligned.
-                    alignment = (ext_experience / jd_required_years) * 100
-                    exp_val = min(100, int(alignment))
-                else:
-                    # Fallback if JD doesn't specify years
-                    exp_val = 100 if ext_experience > 0 else 0
-
-            except Exception:
-                exp_val = 0
-                ext_experience = 0
-
-            # Create Resume Object
-            resume_obj = Resume.objects.create(
-                batch=current_batch,
-                resume_file=resumes_for_ai[i]["file_obj"],
-                jd_file=jd_file,
-                extracted_text1=resumes_for_ai[i]["text"],
-                extracted_text2=extracted_text_jd,
-                score=result.get("score", 0),
-                experience_years=ext_experience, 
-                experience_score=exp_val, # THIS FEEDS THE PROGRESS BAR
-                analysis_reason=result.get("reason", "No reason provided"),
-                confidence_level=str(result.get("confidence_level", "medium")).lower(),
-                raw_ai_response=result,
-            )
-            
-            candidates.append({
-                "id": resume_obj.id,
-                "batch_id": current_batch.id,
-                "name": resumes_for_ai[i]["name"],
-                "score": resume_obj.score,
-                "experience_years": ext_experience, 
-                "experience_score": exp_val, # React reads this for the bar
-                "confidence": resume_obj.confidence_level,
-                "justification": resume_obj.analysis_reason,
+        candidates = [
+            process_resume(result, jd_required_years, {
+                "batch": current_batch,
+                "jd_file": jd_file,
+                "jd_text": jd_text,
+                **resumes_for_ai[i],
             })
+            for i, result in enumerate(ai_results)
+        ]
 
         return Response({"batch_id": current_batch.id, "candidates": candidates})
     

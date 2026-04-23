@@ -49,7 +49,4 @@ def update_password(request):
 
 @api_view(['PATCH'])
 def update_settings(request):
-    user = request.user
-    # Logic to save 'dark_mode' or 'notifications' preferences
-    # This could be saved to a specific UserSettings model
     return Response({"message": "Settings updated"})

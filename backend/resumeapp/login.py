@@ -5,6 +5,7 @@ from rest_framework import status
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
+
 # Helper function to generate tokens
 def get_tokens_for_user(user):
     """
@@ -30,11 +31,11 @@ def login_user(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    User = get_user_model()
+    user_model = get_user_model()
     
     try:
         # 1. Check if the user exists in the database
-        user_record = User.objects.filter(email=email).first()
+        user_record = user_model.objects.filter(email=email).first()
         
         if not user_record:
             return Response(
@@ -69,7 +70,7 @@ def login_user(request):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-    except Exception as e:
+    except Exception:
         # Log the error for debugging if needed: print(e)
         return Response(
             {"status": False, "message": "An internal server error occurred."},

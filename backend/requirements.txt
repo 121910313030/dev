@@ -3,5 +3,7 @@ djangorestframework
 psycopg2-binary
 django-cors-headers
 python-dotenv
+python-dotenv psycopg2-binary
 
-# fitz
+pymupdf
+groq

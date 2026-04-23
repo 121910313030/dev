@@ -22,11 +22,8 @@ load_dotenv(BASE_DIR / '.env')
 
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-238g1=v#)5wp7zw239)yw_$s$k9241pfkt)6=k5f82r#u(#^1h'
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -82,8 +79,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -111,13 +106,6 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000", 
-#     "http://127.0.0.1:3000",
-# ]
-
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -158,9 +146,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
+
 AUTH_USER_MODEL = 'resumeapp.CustomUser'
 
 
 X_FRAME_OPTIONS = 'ALLOWALL'
-
-DEBUG = True

@@ -1,0 +1,165 @@
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background: #f8fafc;
+  overflow: hidden;
+}
+/* LOGIN CARD */
+.crimson-login-card {
+  background: #ffffff;
+  padding: 4rem 3rem;
+  border-radius: 15px;
+  border: 1px solid #e2e8f0;
+  width: 420px;
+  height: 520px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  z-index: 10;
+}
+
+/* TITLE */
+.logo-text-inline {
+  white-space: nowrap;
+  font-weight: 800;
+  color: #1e293b;
+  font-size: 1.6rem;
+  letter-spacing: -0.5px;
+}
+
+/* BADGE */
+.crimson-badge {
+  background: #2563eb;
+  padding: 10px;
+  border-radius: 8px;
+  display: inline-block;
+  color: white;
+}
+
+/* INPUT GROUP */
+.crimson-input-group {
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+
+.crimson-input-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: #000000;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.portal-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;      
+  margin-top: -10px;
+  line-height: 5;
+  font-weight: 500;
+  letter-spacing: 2.5px;
+}
+.crimson-input-group input {
+  width: 100%;
+  padding: 0.9rem;
+  background: #ffffff;
+  border: 1px solid #fefefe;
+  border-radius: 5px;
+  color: #202020;
+  box-sizing: border-box;
+  transition: 0.2s;
+}
+
+/* INPUT HOVER */
+.crimson-input-group input:hover {
+  border-color: #2563eb;
+}
+
+/* INPUT FOCUS */
+.crimson-input-group input:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: #ffffff;
+}
+
+/* LOGIN BUTTON */
+.btn-primary-crimson {
+  width: 100%;
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 2px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.25s;
+}
+/* BUTTON HOVER */
+.btn-primary-crimson:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37,99,235,0.35);
+}
+
+.error-text{
+  color: rgb(255, 60, 60);
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+.btn-signup-crimson {
+  background: linear-gradient( #eae4e6);
+  color: #131010;
+  border: none;
+  padding: 10px 22px;
+  margin-top: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  
+}
+
+.btn-signup-crimson:hover {
+  background: linear-gradient( #ffffff);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(128, 114, 255, 0.4);
+}
+
+.btn-signup-crimson:active {
+  transform: scale(0.97);
+}
+
+.btn-signup-crimson:focus {
+  outline: none;
+}
+
+.bottomText{
+  color: #000000;
+  margin-top: 25px;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btn-primary-crimson:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

@@ -1,0 +1,109 @@
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 68px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: visible;
+  padding: 0 4rem;
+  background: #f8fafc;
+  border-bottom: 1px solid rgba(149, 17, 17, 0.3);
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+/* This is the container for Profile and Logout */
+.nav-right {
+  display: flex;       /* Forces children to be side-by-side */
+  align-items: center; /* Aligns them vertically in the center */
+  gap: 1rem;           /* Adjust this to change space between Profile and Logout */
+}
+
+/* This ensures the icon and text inside Profile are also side-by-side */
+.nav-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  color: black;
+  cursor: pointer;
+  font-weight: bolder;
+  font-size: medium;
+}
+
+.nav-left{
+  display: flex;
+  align-items: center;
+  gap: 8rem;
+}
+
+.nav-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: blue;
+  background-color: aliceblue;
+}
+
+.logo-text{
+    color: black;
+    font-style: normal;
+    font-size: large;
+    font-weight: bold;
+    gap: 0.5rem;
+    padding: -2rem;
+    padding-right: 0.5rem;
+}
+
+.hero-admin-btn{
+  color: blue;
+  
+}
+
+
+/* This is the container for Profile and Logout */
+.profile-container {
+  position: relative; 
+  display: flex;
+  align-items: center;
+}
+
+
+/* THE FLOATING MENU */
+.profile-dropdown {
+  position: absolute;
+  top: 1px; /* Adjust this so it sits right below the "Profile" text */
+  right: 0;
+  width: 200px;
+  background-color: rgb(210, 204, 204) !important; /* Must be solid */
+  color: #000000;
+  font-weight: 900;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(221, 218, 218, 0.1);
+  z-index: 9999; /* Higher than top-nav */
+  padding: 0.5rem 0.3rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+.dropdown-item {
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #000000;
+  font-size: 0.875rem;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: rgb(255, 255, 255);
+}
+
+.dropdown-item:hover {
+  background-color: #f1f5f9;
+  color: #0a00c4;
+}
+
