@@ -247,13 +247,11 @@ const Dashboard = ({ onLogout }) => {
 
           <div className={styles["scroll-area"]}>
             {rankedCandidates.slice(0, 3).map((c, index) => (
-              <div 
-                role="button"
-                tabIndex={0}
+              <button 
+                type="button"
                 key={c.id || index} 
                 className={`${styles["candidate-card"]} ${displayCandidate?.id === c.id ? styles.activeCard : ""}`}
                 onClick={() => setSelectedCandidate(c)}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedCandidate(c); }}
               >
                 <div className={styles["nameColumn"]}>
                   <div className={styles["profileIcon"]}>
@@ -280,7 +278,7 @@ const Dashboard = ({ onLogout }) => {
                   <span className={styles["experienceLabel"]}>Experience</span>
                   <span className={styles["experienceValue"]}>{c.experience_years || 0} Yrs</span>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </main>

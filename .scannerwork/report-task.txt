@@ -1,7 +1,0 @@
-organization=ai-resume-v1
-projectKey=suryayenumula0_ai-resume
-serverUrl=https://sonarcloud.io
-serverVersion=8.0.0.85979
-dashboardUrl=https://sonarcloud.io/dashboard?id=suryayenumula0_ai-resume
-ceTaskId=AZ2495yBljzo4RxusLO5
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZ2495yBljzo4RxusLO5
