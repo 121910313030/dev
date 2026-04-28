@@ -12,14 +12,4 @@ export default defineConfig({
       },
     },
   },
-  // ADD THIS SECTION BELOW
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'lcov'], // 'lcov' is what SonarCloud needs
-      reportsDirectory: './coverage' 
-    },
-  },
 })
